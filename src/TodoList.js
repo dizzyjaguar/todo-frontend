@@ -3,16 +3,17 @@ import AddTodo from './AddTodo'
 import request from 'superagent'
 
 
-const getTodoList = () => request.get(`https://mysterious-springs-09274.herokuapp.com/api/todos`)
+// const getTodoList = () => request.get(`https://mysterious-springs-09274.herokuapp.com/api/todos`)
 
 export default class TodoList extends Component {
-
     state = {
         todoList: []
     }
 
     async componentDidMount() {
-        const todoData = await getTodoList();        
+        const user = JSON.parse(localStorage.getItem('user'));
+        const todoData = await request.get(`https://mysterious-springs-09274.herokuapp.com/api/todos`)
+            .set('Authorization', user.token)        
                 
         this.setState({
             todoList: todoData.body
@@ -25,22 +26,24 @@ export default class TodoList extends Component {
             task: this.state.todoInput,
             complete: false,
         };
+
+        const user = JSON.parse(localStorage.getItem('user'));
     
         const newTodos = [...this.state.todoList, newTodo];
         
         this.setState({ todoList: newTodos })
-        const data = await request.post(`https://mysterious-springs-09274.herokuapp.com/api/todos`, {task: this.state.todoInput})
-            
+        const data = await request.post(`https://mysterious-springs-09274.herokuapp.com/api/todos`,
+        {task: this.state.todoInput})
+        
+        .set('Authorization', user.token);    
     }
 
     handleInput = (e) => { this.setState({ todoInput: e.target.value })};
 
-
-
-
     render() {
-        return (
-            <div>
+        if (localStorage.getItem('user')) {
+            return (
+                <div>
                 TodoList
                 
                 <AddTodo
@@ -48,7 +51,7 @@ export default class TodoList extends Component {
                 handleClick={ this.handleClick }
                 handleInput={ this.handleInput }
                 />
-                
+
                 {
                     this.state.todoList.map(todo => 
                     <p className='todo-item'
@@ -62,8 +65,11 @@ export default class TodoList extends Component {
                         const matchingTodo = newTodos.find((thisTodo) => todo.id === thisTodo.id)
 
                         matchingTodo.complete = !todo.complete
+                        const user = JSON.parse(localStorage.getItem('user'));
+
                         this.setState({ todoList: newTodos });
-                        const newData = await request.put(`https://mysterious-springs-09274.herokuapp.com/api/todos/${todo.id}`, matchingTodo);
+                        const data = await request.put(`https://mysterious-springs-09274.herokuapp.com/api/todos/${todo.id}`, matchingTodo)
+                        .set('Authorization', user.token); 
                     }}
                         key={todo.id}> 
                             { todo.task } 
@@ -72,5 +78,12 @@ export default class TodoList extends Component {
                 }
             </div>
         )
+    } 
+    else {
+        return (
+            <div>You Need To Sign Up </div>
+        )
+    }
+
     }
 }
