@@ -1,0 +1,22 @@
+.App {
+  text-align: center;
+  color: rgb(30, 135, 100);
+  font-size: x-large;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.todo-item {
+  color: mediumslateblue;
+}
+
+.todo-item:hover {
+  cursor: pointer;
+  color: rgb(56, 35, 174);
+}
+
+.todo-item:active {
+  color: maroon;
+}
