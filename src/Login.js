@@ -16,6 +16,8 @@ export default class Login extends Component {
         })
 
         localStorage.setItem('user', JSON.stringify(signIn.body));
+        // this redirects the user after sign in
+        this.props.history.push('/');
     }
     
     handleSignUp = async () => {
@@ -25,6 +27,8 @@ export default class Login extends Component {
         })
 
         localStorage.setItem('user', JSON.stringify(signUp.body));
+        // this redirects the user after sign up
+        this.props.history.push('/');
     }
     
     
